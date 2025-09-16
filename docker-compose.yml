@@ -13,8 +13,15 @@ services:
   orion_front:
     build: ./orion
     container_name: orion_front
-    ports:
-    - "3000:3000"
+    expose:
+    - "3000"
+
+  orion_mail:
+    build: ./orion-mail
+    expose:
+      - "80"
+    environment:
+      - ROUNDCUBE_DEFAULT_HOST=localhost
 
   nginx:
     image: nginx:alpine
