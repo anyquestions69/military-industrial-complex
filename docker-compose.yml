@@ -22,7 +22,20 @@ services:
       - "80"
     environment:
       - ROUNDCUBE_DEFAULT_HOST=localhost
-
+      - ROUNDCUBE_DB_TYPE=mysql
+      - ROUNDCUBE_DB_HOST=roundcube-db
+      - ROUNDCUBE_DB_USER=roundcube
+      - ROUNDCUBE_DB_PASSWORD=roundcubepass
+      - ROUNDCUBE_DB_NAME=roundcube
+  roundcube-db:
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: roundcube
+      MYSQL_USER: roundcube
+      MYSQL_PASSWORD: roundcubepass
+    volumes:
+      - ./roundcube-data:/var/lib/mysql
   nginx:
     image: nginx:alpine
     container_name: orion_nginx
@@ -32,3 +45,4 @@ services:
       - "80:80"
     depends_on:
       - orion_front
+

@@ -33,7 +33,7 @@ $config = [];
 //       for Mysql: key, cipher, cert, capath, ca, verify_server_cert,
 //       for Postgres: application_name, sslmode, sslcert, sslkey, sslrootcert, sslcrl, sslcompression, service.
 //       e.g. 'mysql://roundcube:@localhost/roundcubemail?verify_server_cert=false'
-$config['db_dsnw'] = 'mysql://roundcube:@localhost/roundcubemail';
+$config['db_dsnw'] = 'mysql://roundcube:roundcubepass@roundcube-db/roundcube';
 
 // Database DSN for read-only operations (if empty write database will be used)
 // useful for database replication
