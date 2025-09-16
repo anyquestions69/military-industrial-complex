@@ -1,0 +1,30 @@
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+  background-color: #071018;
+  color: #d7dfe3;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+header, footer {
+  padding: 1rem 2rem;
+  background-color: #08121a;
+  border-bottom: 1px solid #152028;
+}
+
+nav a:hover {
+  color: #ff6744;
+  transition: color 0.3s;
+}
+
+.panel-card {
+  background-color: #0d1822;
+  border: 1px solid #1f2d38;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin: 0.5rem 0;
+}

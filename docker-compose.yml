@@ -1,0 +1,27 @@
+services:
+  # backend:
+  #   build: ./backend
+  #   container_name: dic_backend
+  #   ports:
+  #   - "8080:8080"
+  #   environment:
+  #   - NODE_ENV=production
+  #   volumes:
+  #   - ./backend/flags:/flags:ro
+  #   networks:
+  #   - dicnet
+  orion_front:
+    build: ./orion
+    container_name: orion_front
+    ports:
+    - "3000:3000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: orion_nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - orion_front
