@@ -1,35 +1,32 @@
-# Базовый образ PHP 8.2 + Apache
 FROM php:8.2-apache
 
-# Установка зависимостей PHP и системы
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        libpng-dev libjpeg-dev libfreetype6-dev libzip-dev zip unzip git \
-        libonig-dev libxml2-dev default-mysql-client composer \
+       libpng-dev libjpeg-dev libfreetype6-dev libzip-dev zip unzip git curl \
+       libonig-dev libxml2-dev default-mysql-client \
+       libicu-dev pkg-config \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install mysqli mbstring gd zip pdo_mysql \
-    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+    && docker-php-ext-install mysqli mbstring gd zip pdo_mysql intl xml \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Копируем исходники Roundcube
+RUN curl -sS https://getcomposer.org/installer | php \
+      -- --install-dir=/usr/local/bin --filename=composer
+
+RUN a2enmod rewrite headers
+
 WORKDIR /var/www/html
+
 COPY . .
 
-# Установка зависимостей PHP через Composer
-WORKDIR /var/www/html/program
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader || true
 
-# Создание директорий для сессий, temp и логов
 RUN mkdir -p /var/lib/php/sessions \
     /var/log/roundcube \
-    /var/www/html/program/temp \
-    && chown -R www-data:www-data /var/lib/php/sessions \
-    && chown -R www-data:www-data /var/log/roundcube \
-    && chown -R www-data:www-data /var/www/html/program
-
-# Копируем скрипт инициализации
-RUN chmod +x /usr/local/bin/init-roundcube.sh
+    /var/www/html/temp \
+    /var/www/html/logs \
+    && chown -R www-data:www-data /var/www/html \
+    && chown -R www-data:www-data /var/lib/php/sessions /var/log/roundcube /var/www/html/temp /var/www/html/logs
 
 EXPOSE 80
 
-# Старт контейнера через скрипт инициализации
-CMD ["/usr/local/bin/init-roundcube.sh"]
+CMD ["apache2-foreground"]

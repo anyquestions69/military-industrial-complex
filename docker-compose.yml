@@ -1,15 +1,5 @@
 services:
-  # backend:
-  #   build: ./backend
-  #   container_name: dic_backend
-  #   ports:
-  #   - "8080:8080"
-  #   environment:
-  #   - NODE_ENV=production
-  #   volumes:
-  #   - ./backend/flags:/flags:ro
-  #   networks:
-  #   - dicnet
+
   orion_front:
     build: ./orion
     container_name: orion_front
@@ -20,22 +10,36 @@ services:
     build: ./orion-mail
     expose:
       - "80"
+    depends_on:
+      - orion-db
+      - mail
     environment:
-      - ROUNDCUBE_DEFAULT_HOST=localhost
-      - ROUNDCUBE_DB_TYPE=mysql
-      - ROUNDCUBE_DB_HOST=roundcube-db
+      - ROUNDCUBE_DEFAULT_HOST=orion-mail
+      - ROUNDCUBE_DB_TYPE=pgsql
+      - ROUNDCUBE_DB_HOST=orion-db
       - ROUNDCUBE_DB_USER=roundcube
       - ROUNDCUBE_DB_PASSWORD=roundcubepass
-      - ROUNDCUBE_DB_NAME=roundcube
-  roundcube-db:
-    image: mariadb:10.5
+      - ROUNDCUBE_DB_NAME=roundcube     
+      - ROUNDCUBE_DEFAULT_HOST=mail
+      - ROUNDCUBE_DEFAULT_PORT=143
+      - ROUNDCUBE_SMTP_SERVER=mail
+      - ROUNDCUBE_SMTP_PORT=1025
+      - ROUNDCUBE_SMTP_USER=admin@example.com
+      - ROUNDCUBE_SMTP_PASS=adminpass
+      - ROUNDCUBE_DB_SSL=false
+      - ROUNDCUBE_DB_TLS=DISABLED
+    
+  orion-db:
+    image: postgres:15-alpine
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: roundcube
-      MYSQL_USER: roundcube
-      MYSQL_PASSWORD: roundcubepass
+      POSTGRES_USER: roundcube
+      POSTGRES_PASSWORD: roundcubepass
+      POSTGRES_DB: roundcube
     volumes:
-      - ./roundcube-data:/var/lib/mysql
+      - ./roundcube-data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+
   nginx:
     image: nginx:alpine
     container_name: orion_nginx
@@ -45,4 +49,28 @@ services:
       - "80:80"
     depends_on:
       - orion_front
+      - orion_mail
 
+  mail:
+    image: docker.io/mailserver/docker-mailserver:latest
+    hostname: mail.example.com
+    container_name: mail
+    platform: linux/arm64 
+    env_file: ./mailserver.env
+    expose:
+      - "25"   
+      - "143" 
+      - "587" 
+    volumes:
+      - mail-data:/var/mail
+      - mail-state:/var/mail-state
+      - mail-logs:/var/log/mail
+      - config:/tmp/docker-mailserver/
+    restart: always
+
+volumes:
+  mail-data:
+  mail-state:
+  mail-logs:
+  config:
+  roundcube-data:
