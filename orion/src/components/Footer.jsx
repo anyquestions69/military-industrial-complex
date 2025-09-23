@@ -41,7 +41,7 @@ export default function Footer() {
           <h3>Контакты</h3>
           <p>Москва, Ленинградский проспект, д. 45</p>
           <p>Тел: +7 (495) 123-45-67</p>
-          <p>Email: <a href="mailto:info@orion.mil.ru">info@orion.mil.ru</a></p>
+          <p>Email: <a href="mailto:admin@mail.orion.vka">admin@mail.orion.vka</a></p>
           <a href="#">Карта сайта</a>
         </div>
       </div>

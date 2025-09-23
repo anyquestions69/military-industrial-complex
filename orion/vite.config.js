@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
   host: false, // слушать на 0.0.0.0
-  allowedHosts: ["orion.mil.ru", "orion_front"], // разрешаем доступ по домену
+  allowedHosts: ["orion.vka", "orion_front"], // разрешаем доступ по домену
   port: 3000
   }
 })
